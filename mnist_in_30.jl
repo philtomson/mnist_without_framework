@@ -30,6 +30,7 @@ function feed_forward(X, weights)
     return a
 end
 
+#Calculate Gradients
 function grads(X, Y, weights)
     println()
     println(">>> grads()")
