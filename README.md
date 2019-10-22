@@ -25,7 +25,8 @@ details.
 
    ```a = np.array([0,1,2])
       a + 5
-   => array([5, 6, 7])```
+   => array([5, 6, 7])
+   ```
 
    in this case an array was added with a scalar.
 
