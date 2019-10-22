@@ -29,8 +29,7 @@ details.
    ```
 
    in this case an array was added with a scalar.
-   
-   There are convenience advantages to the numpy approach of automatically determining when to broadcast based on size mismatch, however, the disadvantage is that some types of errors may not be caught. I'm tending to prefer Julia's insistence on using the special broadcasting operator when that's what you want.
+
 
    In Julia broadcasting needs to be explicitly specified by using a broadcasting operator:
 
@@ -52,5 +51,6 @@ details.
    Note that broadcasting operators are prefixed with a '.' as in '.+' above.
 
 
+   There are convenience advantages to the numpy approach of automatically determining when to broadcast based on size mismatch, however, the disadvantage is that some types of errors may not be caught. I'm tending to prefer Julia's insistence on using the special broadcasting operator when that's what you want.
    
 
