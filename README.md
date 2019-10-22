@@ -19,7 +19,7 @@ details.
 # Differences:
 
 * Dot product
-`
+
 * Broadcasting
    In numpy, broadcasting seems to occur whenever array/matrix sizes are mismatched in an operation, for example:
 
@@ -29,7 +29,8 @@ details.
    ```
 
    in this case an array was added with a scalar.
-
+   
+   There are convenience advantages to the numpy approach of automatically determining when to broadcast based on size mismatch, however, the disadvantage is that some types of errors may not be caught. I'm tending to prefer Julia's insistence on using the special broadcasting operator when that's what you want.
 
    In Julia broadcasting needs to be explicitly specified by using a broadcasting operator:
 
