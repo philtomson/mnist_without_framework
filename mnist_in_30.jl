@@ -114,22 +114,26 @@ weights = [randn(w) * 0.1 for w in [(784, 100), (100, 10)]]
 weights = convert(Array{Array{Float32,2},1}, weights)
 num_epochs, batch_size, learn_rate = 30, 20, 0.1
 
-for i in 1:num_epochs
-    @show i
-    for j in 1:length(trX):batch_size
-        @show j
-        global weights
-        X, Y = trX[:,j:j+batch_size-1], trY[j:j+batch_size-1,:]
-        gs = grads(X, Y, weights)
-        @show size(gs[1])
-        @show size(gs[2])
-        #size(weights[1]) is: (784,100)
-        #size(gs[1])      is: (20,784) : in python: (784,100) *** DISCREPENCY ***
-        #size(gs[2])      is: (100,10) : in python: (100,10)
-        weights -= learn_rate .* gs
+function run(num_epochs, trX, trY, teX, teY, batch_size, weights, learn_rate )
+    for i in 1:num_epochs
+        @show i
+        for j in 1:length(trX):batch_size
+            @show j
+            #global weights
+            X, Y = trX[:,j:j+batch_size-1], trY[j:j+batch_size-1,:]
+            gs = grads(X, Y, weights)
+            @show size(gs[1])
+            @show size(gs[2])
+            #size(weights[1]) is: (784,100)
+            #size(gs[1])      is: (20,784) : in python: (784,100) *** DISCREPENCY ***
+            #size(gs[2])      is: (100,10) : in python: (100,10)
+            weights -= learn_rate .* gs
+        end
+        prediction = argmax(feed_forward(teX, weights)[-1], 2)
+        @show prediction
+        println(i, mean(prediction == argmax(teY, 2)))
+        println()
     end
-    prediction = argmax(feed_forward(teX, weights)[-1], 2)
-    @show prediction
-    println(i, mean(prediction == argmax(teY, 2)))
-    println()
 end
+
+run(num_epochs, trX, trY, teX, teY, batch_size, weights, learn_rate )
