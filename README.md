@@ -16,9 +16,49 @@ details.
 
 *   MATLAB–Python–Julia cheatsheet ( https://cheatsheets.quantecon.org/ )
 
-# Differences:
+# Differences between numpy and Julia:
 
-* Dot product
+* Dot product, Inner product:
+
+In Python the dot products and inner products on matrices:
+
+    >>> a=np.array([[1,2],[3,4]])
+    >>> b=np.array([[11,12],[13,14]])
+    >>> np.dot(a,b)
+    array([[37, 40],
+           [85, 92]])
+    >>> np.inner(a,b)
+    array([[35, 41],
+           [81, 95]])
+
+
+In Julia to get the same results:
+
+    julia> a = [1 2; 3 4]
+    julia> b = [11 12; 13 14]
+    julia> a*b #equiv to np.dot(a,b)
+       2×2 Array{Int64,2}:
+       37  40
+       85  92
+    julia> a*b' #equiv to np.inner(a,b)
+       2×2 Array{Int64,2}:
+       35  41
+       81  95
+
+Note that if you use the dot function you'll get a scalar (which 
+seems to make sense):
+
+    julia> imort LinearAlgebra
+    julia> dot(a,b)
+       130
+
+And if you use a broadcasted dot function:
+
+    julia> dot.(a,b)
+      2×2 Array{Int64,2}:
+      11  24
+      39  56    
+    
 
 * Broadcasting
    In numpy, broadcasting seems to occur whenever array/matrix sizes are mismatched in an operation, for example:
