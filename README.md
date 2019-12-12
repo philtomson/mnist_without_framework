@@ -20,7 +20,7 @@ details.
 
 * Dot product, Inner product:
 
-In Python the dot products and inner products on matrices:
+Example dot product and inner product on matrices in Python with numpy:
 
     >>> a=np.array([[1,2],[3,4]])
     >>> b=np.array([[11,12],[13,14]])
@@ -48,7 +48,7 @@ In Julia to get the same results:
 Note that if you use the dot function you'll get a scalar (which 
 seems to make sense):
 
-    julia> imort LinearAlgebra
+    julia> import LinearAlgebra
     julia> dot(a,b)
        130
 
