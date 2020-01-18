@@ -1,5 +1,6 @@
 using MLDatasets
 using LinearAlgebra
+using Statistics
 using Debugger
 break_on(:error)
 
@@ -34,7 +35,12 @@ end
 function grads(X, Y, weights)
     println()
     println(">>> grads()")
+    @show size(X)
+    @show size(Y)
     grads = similar(weights)
+    @show size(grads)
+    #println("   size(grads[1] $(size(grads[1]))")
+    #println("   size(grads[2] $(size(grads[2]))")
     a = feed_forward(X, weights)
     #Python:
     #a[0].shape = (20,784)
@@ -45,37 +51,46 @@ function grads(X, Y, weights)
     #size(aa[2]) (100, 20)
     #size(aa[3]) (10, 20)
 
-    @show size(a[end])
-    @show size(Y)
-    delta = a[end]' - Y
-    @show size(delta)
+    @show size(a)    # 3
+    @show size(a[1]) # (784, 20)
+    @show size(a[2]) # (100, 20)
+    @show size(a[3]) # (10,  20)
+    @show size(a[end]) #(10,20) Python: (20,10)
+    @show size(Y) #(20,10) same
+    delta = a[end]' - Y # difference between expected (Y) and final layer output (a[end])
+    @show size(delta) # (20, 10)
     #size(delta) : (20,10)
-    @show size(a[end-1]')
+    @show size(a[end-1]') #(20,100)
     #was: grads[end] = dot(a[end-1],delta)
-    grads[end] = a[end-1]*delta
+    grads[end] = a[end-1]*delta 
+    @show size(grads[end]) # (100, 10)
     #for i in range(len(a)-2, 0, -1)
     @show length(a)
     #for i in Iterators.reverse(1:length(a)-1)
     i = 2
+        println(" i = 2 now")
         #@show i
         #delta = (a[i] .> 0) .* dot(delta, transpose(weights[i]))
         #@show size(delta)
         @show size(weights[i])
         dw = (delta * weights[i]')
-        @show size(dw)
-        @show size(a[i] .> 0) #this is the relu
+        @show size(dw) # (20, 100)
         relu = (a[i] .> 0)
-        @show size(relu)[1]
-        @show size(relu)
+        @show size(relu)[1] # (100)
+        @show size(relu)    # (100,20)
         #size(relu): Julia: (100,20), Python: (20,784) **DISCREPANCY**
-        delta = dw * relu #relu * dw
-        @show size(a[i])
+        #delta = dw * relu #relu * dw
+        delta = dw .* relu'
+        println("Showing delta and a sizes prior to the multiply:")
+        @show size(a[i-1]) #(784, 20)
         @show size(delta) #(20,20) : python (20,100) *** DISCREPANCY ***
         # was: grads[i-1] = dot(a[i-1]',delta)
-        grads[i-1] = delta * a[i-1]'  #* delta
+        # was: grads[i-1] = delta * a[i-1]  #* delta
+        
+        grads[i-1] = a[i-1] * delta   #* delta
     #end
-    @show size(grads[1])
-    @show size(grads[2])
+    @show size(grads[1]) #(20, 784)   Python: (784,100) DISCRPEANCY
+    @show size(grads[2]) #(100, 10)
     @show size(X)
     tmp_g = grads ./ length(X)
     @show size(tmp_g[1])
@@ -122,16 +137,25 @@ function run(num_epochs, trX, trY, teX, teY, batch_size, weights, learn_rate )
             #global weights
             X, Y = trX[:,j:j+batch_size-1], trY[j:j+batch_size-1,:]
             gs = grads(X, Y, weights)
+            @show size(gs)
             @show size(gs[1])
             @show size(gs[2])
+            @show size(weights)
+            @show size(weights[1])
+            @show size(weights[2])
             #size(weights[1]) is: (784,100)
             #size(gs[1])      is: (20,784) : in python: (784,100) *** DISCREPENCY ***
             #size(gs[2])      is: (100,10) : in python: (100,10)
-            weights -= learn_rate .* gs
+            scaled_gs = learn_rate .* gs
+            @show size(scaled_gs)
+            @show size(scaled_gs[1])
+            @show size(scaled_gs[2])
+            weights -= learn_rate .* gs #where the error crops up
         end
-        prediction = argmax(feed_forward(teX, weights)[-1], 2)
+        #TODO: argmax here not working like np.argmax!!!!
+        prediction = argmax(feed_forward(teX, weights)[end], dims=2)
         @show prediction
-        println(i, mean(prediction == argmax(teY, 2)))
+        println(i, mean(prediction == argmax(teY, dims=2)))
         println()
     end
 end

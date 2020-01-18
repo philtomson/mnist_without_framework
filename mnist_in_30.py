@@ -12,6 +12,19 @@ def feed_forward(X, weights):
         a.append(np.maximum(a[-1].dot(w),0))
     return a
 
+def grads_orig(X, Y, weights):
+    grads = np.empty_like(weights)
+    a = feed_forward(X, weights)
+    delta = a[-1] - Y #calc diff at last layer
+    grads[-1] = a[-2].T.dot(delta)
+    print(f"from {len(a)-2} downto 0")
+    for i in range(len(a)-2, 0, -1): #calc diffs from 2nd to last layer to the first
+        print(f"   layer i is: {i}")
+        delta = (a[i] > 0) * delta.dot(weights[i].T)
+        grads[i-1] = a[i-1].T.dot(delta)
+    print(" ---------------- ")
+    return grads / len(X)
+
 def grads(X, Y, weights):
     print("grads() called")
     grads = np.empty_like(weights)
@@ -22,6 +35,8 @@ def grads(X, Y, weights):
     delta = a[-1] - Y #delta.shape: (20,10), Y.shape:(20,10)
     print(f"   a[-1].shape: {(a[-1]).shape}")
     print(f"   a[-2].shape: {(a[-2]).shape}")
+    print(f"   a[0].shape: {(a[0]).shape}")
+    print(f"   Y.shape: {Y.shape}") #(20,10)
     #(a[-1]).shape:   (20,100)
     #(a[-2].T).shape: (100,20)
     grads[-1] = a[-2].T.dot(delta) #grads[-1].shape: (100,10)
@@ -34,7 +49,8 @@ def grads(X, Y, weights):
     delta = (a[i] > 0) * delta.dot(weights[i].T)
     print("   delta.shape: "+str(delta.shape)) #(20,100)
     grads[i-1] = a[i-1].T.dot(delta)
-    print(f"   grads.shape: {grads.shape}")
+    print(f"   grads[0].shape: {grads[0].shape}") #(784,100)
+    print(f"   grads[1].shape: {grads[1].shape}") #(100, 10)
     return grads / len(X)
 
 trX, trY, teX, teY = mnist.load_data()
