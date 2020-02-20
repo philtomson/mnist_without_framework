@@ -40,6 +40,9 @@ def grads(X, Y, weights):
 
 trX, trY, teX, teY = mnist.load_data()
 weights = [np.random.randn(*w) * 0.1 for w in [(784, 100), (100, 10)]]
+#uncomment following 2 lines to use saved weights
+#np.save("weights.npy", weights)
+#weights = np.load("weights.npy", allow_pickle=True)
 num_epochs, batch_size, learn_rate = 30, 20, 0.1
 
 for i in range(num_epochs):
@@ -52,4 +55,4 @@ for i in range(num_epochs):
         print(f"   scaled_gs[0].shape: {scaled_gs[0].shape}")
         print(f"   scaled_gs[1].shape: {scaled_gs[1].shape}")
     prediction = np.argmax(feed_forward(teX, weights)[-1], axis=1)
-    print(i, np.mean(prediction == np.argmax(teY, axis=1)))
+    print(f"i={i}, accuracy: {np.mean(prediction == np.argmax(teY, axis=1))}")
